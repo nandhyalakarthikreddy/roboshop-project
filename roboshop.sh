@@ -14,4 +14,5 @@ do
     ID=$(aws ec2 describe-instances --instance-ids i-0c9aa6b4b5444fd9b --query 
     'Reservations[0].Instances[0].PublicIpAddress' --output text)
     fi
+    echo "$instance : $IP"
 done
