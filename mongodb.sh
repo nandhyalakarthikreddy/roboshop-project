@@ -20,11 +20,11 @@ fi
 
 VALIDATE(){
     if [ $1 -ne 0 ]; then
-        echo -e "$R Error :: failed to install $2 $N " | tee -a $LOGS_FILE
+        echo -e "$2 ... $R FAILURE $N " | tee -a $LOGS_FILE
         exit 1
     else
-        echo -e "$G installing the $2 server is success $N" | tee -a $LOGS_FILE
-fi
+        echo -e "$2 ... $G success $N" | tee -a $LOGS_FILE
+    fi
 }
 
 cp mongo.repo /etc/yum.repos.d/mongo.repo
