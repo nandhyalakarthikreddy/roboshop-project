@@ -9,6 +9,7 @@ LOG_FOLDER="/var/log/shell-roboshop"
 FILE_NAME=$( echo $0 | cut -d "." -f1 )
 LOG_FILE="$LOG_FOLDER/$FILE_NAME.log"
 MONGODB_HOST=mongodb.nkrdev.space
+SCRIPT_DIR=$pwd
 mkdir -p $LOG_FOLDER
 
 echo "script started and executed at :  $(date)" | tee -a $LOG_FILE
@@ -42,7 +43,7 @@ VALIDATE $? "Addding system user"
 mkdir /app 
 VALIDATE $? "creating app directory"
 
-curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip 
+curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>>$LOG_FILE
 VALIDATE $? "downloading catalogue application"
 
 cd /app 
@@ -57,7 +58,7 @@ VALIDATE $? "changing the app directory"
 npm install  &>>$LOG_FILE
 VALIDATE $? "installing the library"
 
-cp catalogue.service /etc/systemd/system/catalogue.service &>>$LOG_FILE
+cp $SCRIPT_DIR/catalogue.service /etc/systemd/system/catalogue.service &>>$LOG_FILE
 VALIDATE $? "Adding catalogue repo"
 
 systemctl daemon-reload
