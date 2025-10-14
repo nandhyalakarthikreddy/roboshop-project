@@ -36,6 +36,7 @@ VALIDATE $? "Enable nodejs"
 
 dnf install nodejs -y &>>$LOG_FILE
 VALIDATE $? "Installing nodejs"
+
 id roboshop &>>$LOG_FILE
 if [ $? -ne 0 ]; then
     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
@@ -43,6 +44,7 @@ if [ $? -ne 0 ]; then
 else
     echo -e "Already exists $Y skipping $N"
 fi
+
 mkdir -p /app 
 VALIDATE $? "creating app directory"
 
@@ -61,7 +63,7 @@ VALIDATE $? "unzip the file"
 npm install  &>>$LOG_FILE
 VALIDATE $? "installing the library"
 
-cp $SCRIPT_DIR/catalogue.service /etc/systemd/system/catalogue.service &>>$LOG_FILE
+cp $SCRIPT_DIR/catalogue.service /etc/systemd/system/catalogue.service 
 VALIDATE $? "Adding catalogue repo"
 
 systemctl daemon-reload
