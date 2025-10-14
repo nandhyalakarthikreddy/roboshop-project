@@ -9,7 +9,7 @@ LOG_FOLDER="/var/log/shell-roboshop"
 FILE_NAME=$( echo $0 | cut -d "." -f1 )
 LOG_FILE="$LOG_FOLDER/$FILE_NAME.log"
 MONGODB_HOST=mongodb.nkrdev.space
-SCRIPT_DIR=$pwd
+SCRIPT_DIR=$PWD
 mkdir -p $LOG_FOLDER
 
 echo "script started and executed at :  $(date)" | tee -a $LOG_FILE
