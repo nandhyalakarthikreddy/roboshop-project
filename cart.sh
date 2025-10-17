@@ -16,7 +16,7 @@ mkdir -p $LOG_FOLDER
 echo "script started and executed at :  $(date)" | tee -a $LOG_FILE
 
 if [ $USERID -ne 0 ]; then
-    echo -e " $R Error :: please run the script by using root user $N "
+    echo -e " $R Error :: please run the script by using root cart $N "
     exit 1
 fi
 
@@ -40,8 +40,8 @@ VALIDATE $? "Installing nodejs"
 
 id roboshop &>>$LOG_FILE
 if [ $? -ne 0 ]; then
-    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
-    VALIDATE $? "Addding system user"
+    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system cart" roboshop &>>$LOG_FILE
+    VALIDATE $? "Addding system cart"
 else
     echo -e "Already exists $Y skipping $N"
 fi
@@ -49,8 +49,8 @@ fi
 mkdir -p /app 
 VALIDATE $? "creating app directory"
 
-curl -o /tmp/user.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip &>>$LOG_FILE
-VALIDATE $? "downloading user application"
+curl -o /tmp/cart.zip https://roboshop-artifacts.s3.amazonaws.com/cart-v3.zip &>>$LOG_FILE
+VALIDATE $? "downloading cart application"
 
 cd /app 
 VALIDATE $? "changing to app directory"
@@ -58,23 +58,23 @@ VALIDATE $? "changing to app directory"
 rm -rf /app/*
 VALIDATE $? "removing exissting code"
 
-unzip /tmp/user.zip &>>$LOG_FILE
+unzip /tmp/cart.zip &>>$LOG_FILE
 VALIDATE $? "unzip the file"
 
 npm install  &>>$LOG_FILE
 VALIDATE $? "installing the library"
 
-cp $SCRIPT_DIR/user.service /etc/systemd/system/user.service 
-VALIDATE $? "Adding user repo"
+cp $SCRIPT_DIR/cart.service /etc/systemd/system/cart.service 
+VALIDATE $? "Adding cart repo"
 
 systemctl daemon-reload
 VALIDATE $? "Reload the file"
 
-systemctl enable user &>>$LOG_FILE
-VALIDATE $? "enable the user"
+systemctl enable cart &>>$LOG_FILE
+VALIDATE $? "enable the cart"
 
-systemctl restart user
-VALIDATE $? "Restarting user"
+systemctl restart cart
+VALIDATE $? "Restarting cart"
 
 END_TIME=$(date +%s)
 TOTAL_TIME=$(($END_TIME-$START_TIME))
