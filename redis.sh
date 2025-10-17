@@ -45,3 +45,4 @@ systemctl start redis &>>$LOG_FILE
 VALIDATE $? "starting the redis"
 END_TIME=$(date +%s)
 TOTAL_TIME=$(($END_TIME-$START_TIME))
+echo -e "script executed in :: $Y $TOTAL_TIME seconds $N"
