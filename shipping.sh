@@ -65,9 +65,9 @@ systemctl daemon-reload
 
 systemctl enable shipping 
 
-# systemctl start shipping
+systemctl start shipping
 
-# dnf install mysql -y 
+dnf install mysql -y 
 
 END_TIME=$(date +%s)
 TOTAL_TIME=$(($END_TIME-$START_TIME))
