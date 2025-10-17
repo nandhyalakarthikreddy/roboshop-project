@@ -10,7 +10,6 @@ FILE_NAME=$( echo $0 | cut -d "." -f1 )
 LOG_FILE="$LOG_FOLDER/$FILE_NAME.log"
 START_TIME=$(date +%s)
 SCRIPT_DIR=$PWD
-MYSQL_HOST=mysql.nkrdev.space
 mkdir -p $LOG_FOLDER
 
 echo "script started and executed at :  $(date)" | tee -a $LOG_FILE
@@ -29,7 +28,7 @@ VALIDATE(){
     fi
 }
 
-dnf install maven -y &>>$LOG_FILE
+dnf install python3 gcc python3-devel -y &>>$LOG_FILE
 VALIDATE $? "Installing maven"
 
 id roboshop &>>$LOG_FILE
@@ -43,8 +42,8 @@ fi
 mkdir -p /app 
 VALIDATE $? "creating app directory"
 
-curl -o /tmp/shipping.zip https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip &>>$LOG_FILE
-VALIDATE $? "downloading shipping application"
+curl -o /tmp/payment.zip https://roboshop-artifacts.s3.amazonaws.com/payment-v3.zip &>>$LOG_FILE
+VALIDATE $? "downloading payment application"
 
 cd /app 
 VALIDATE $? "changing to app directory"
@@ -52,34 +51,19 @@ VALIDATE $? "changing to app directory"
 rm -rf /app/*
 VALIDATE $? "removing exissting code"
 
-unzip /tmp/shipping.zip &>>$LOG_FILE
+unzip /tmp/payment.zip &>>$LOG_FILE
 VALIDATE $? "unzip the file"
 
+pip3 install -r requirements.txt &>>$LOG_FILE
 
-mvn clean package &>>$LOG_FILE
-
-mv target/shipping-1.0.jar shipping.jar &>>$LOG_FILE
-
-cp $SCRIPT_DIR/shipping.service /etc/systemd/system/shipping.service &>>$LOG_FILE
+cp $SCRIPT_DIR/payment.service /etc/systemd/system/payment.service &>>$LOG_FILE
 
 systemctl daemon-reload &>>$LOG_FILE
 
-systemctl enable shipping &>>$LOG_FILE
+systemctl enable payment &>>$LOG_FILE
 
-systemctl start shipping &>>$LOG_FILE
+systemctl start payment &>>$LOG_FILE
 
-dnf install mysql -y &>>$LOG_FILE
-
-mysql -h $MYSQL_HOST -uroot -pRoboShop@1 -e 'use cities'
-if [ $? -ne 0 ]; then
-    mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/schema.sql &>>$LOG_FILE
-    mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/app-user.sql &>>$LOG_FILE
-    mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/master-data.sql &>>$LOG_FILE
-else
-    echo -e "Shipping data is already loaded ..... $Y skipping...$N" 
-fi
-
-systemctl restart shipping &>>$LOG_FILE
 
 END_TIME=$(date +%s)
 TOTAL_TIME=$(($END_TIME-$START_TIME))
