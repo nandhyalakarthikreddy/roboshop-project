@@ -72,14 +72,5 @@ VALIDATE $? "Reload the file"
 systemctl enable user &>>$LOG_FILE
 VALIDATE $? "enable the user"
 
-# cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo 
-# VALIDATE $? "Adding mongo repo"
-
-# dnf install mongodb-mongosh -y &>>$LOG_FILE
-# VALIDATE $? "installing the mongodb"
-
-# mongosh --host $MONGODB_HOST </app/db/master-data.js &>>$LOG_FILE
-# VALIDATE $? "load user products"
-
 systemctl restart user
 VALIDATE $? "Restarting user"
