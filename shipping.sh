@@ -70,7 +70,7 @@ systemctl start shipping &>>$LOG_FILE
 
 dnf install mysql -y &>>$LOG_FILE
 
-mysql -h $MYSQL_HOST -uroot -pRoboShop@1 -e 'use cities'
+mysql -h $MYSQL_HOST -uroot -pRoboShop@1 -e 'use mysql'
 if [ $? -ne 0 ]; then
     mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/schema.sql &>>$LOG_FILE
     mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/app-user.sql &>>$LOG_FILE
