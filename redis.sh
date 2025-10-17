@@ -8,6 +8,7 @@ USERID=$(id -u)
 LOG_FOLDER="/var/log/shell-roboshop"
 FILE_NAME=$( echo $0 | cut -d "." -f1 )
 LOG_FILE="$LOG_FOLDER/$FILE_NAME.log"
+START_TIME=$(date +%s)
 mkdir -p $LOG_FOLDER
 
 echo "script started and executed at :  $(date)" | tee -a $LOG_FILE
@@ -42,4 +43,5 @@ VALIDATE $? "Enable the redis"
 
 systemctl start redis &>>$LOG_FILE
 VALIDATE $? "starting the redis"
-
+END_TIME=$(date +%s)
+TOTAL_TIME=$(($END_TIME-$START_TIME))
