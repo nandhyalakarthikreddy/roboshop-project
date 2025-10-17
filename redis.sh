@@ -25,11 +25,21 @@ VALIDATE(){
         echo -e "$G $2 server $N" | tee -a $LOG_FILE
 fi
 }
-dnf module disable redis -y
+dnf module disable redis -y $LOG_FILE
+VALIDATE $? "Disabling the default redis"
 
-dnf module enable redis:7 -y
+dnf module enable redis:7 -y $LOG_FILE
+VALIDATE $? "Enabling the updated version"
 
-dnf install redis -y 
+dnf install redis -y $LOG_FILE
+VALIDATE $? "installing the redis"
 
-sed -i 's/127.0.0.1/0.0.0.0/g' /etc/redis/redis.conf
+sed -i -e 's/127.0.0.1/0.0.0.0/g' -e'/protected-mode/ c  protected-mode no' /etc/redis/redis.conf
+VALIDATE $? "Allowing remote connection"
+
+systemctl enable redis $LOG_FILE
+VALIDATE $? "Enable the redis"
+
+systemctl start redis $LOG_FILE
+VALIDATE $? "starting the redis"
 
