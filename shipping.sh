@@ -10,6 +10,7 @@ FILE_NAME=$( echo $0 | cut -d "." -f1 )
 LOG_FILE="$LOG_FOLDER/$FILE_NAME.log"
 START_TIME=$(date +%s)
 SCRIPT_DIR=$PWD
+
 mkdir -p $LOG_FOLDER
 
 echo "script started and executed at :  $(date)" | tee -a $LOG_FILE
@@ -61,13 +62,24 @@ mv target/shipping-1.0.jar shipping.jar
 
 cp $SCRIPT_DIR/shipping.service /etc/systemd/system/shipping.service
 
-systemctl daemon-reload
+systemctl daemon-reload &>>$LOG_FILE
 
-systemctl enable shipping 
+systemctl enable shipping &>>$LOG_FILE
 
-systemctl start shipping
+systemctl start shipping &>>$LOG_FILE
 
-dnf install mysql -y 
+dnf install mysql -y &>>$LOG_FILE
+
+mysql -h mysql.nkrdev.space -uroot -pRoboShop@1 -e 'use cities'
+if [ $? -ne 0 ]; then
+    mysql -h <MYSQL-SERVER-IPADDRESS> -uroot -pRoboShop@1 < /app/db/schema.sql &>>$LOG_FILE
+    mysql -h <MYSQL-SERVER-IPADDRESS> -uroot -pRoboShop@1 < /app/db/app-user.sql &>>$LOG_FILE
+    mysql -h <MYSQL-SERVER-IPADDRESS> -uroot -pRoboShop@1 < /app/db/master-data.sql &>>$LOG_FILE
+else
+    echo -e "Shipping data is already loaded ..... $Y skipping...$N" 
+fi
+
+systemctl restart shipping &>>$LOG_FILE
 
 END_TIME=$(date +%s)
 TOTAL_TIME=$(($END_TIME-$START_TIME))
